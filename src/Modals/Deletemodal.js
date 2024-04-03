@@ -73,9 +73,9 @@ export const DeleteModal = ({
         aria-describedby="child-modal-description"
       >
         <Box sx={{ ...style, width: 500 }}>
-          <h2 id="child-modal-title">Text in a child modal</h2>
+          <h2 id="child-modal-title">Delete Employee</h2>
           <p id="child-modal-description">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            Are you sure you want to delete this employee?
           </p>
           <Box
             sx={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}

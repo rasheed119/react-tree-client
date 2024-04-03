@@ -12,65 +12,112 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button, ListItemIcon } from "@mui/material";
+import FolderIcon from "@mui/icons-material/Folder";
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import RememberMeIcon from "@mui/icons-material/RememberMe";
+import BadgeIcon from "@mui/icons-material/Badge";
 
-const drawerWidth = 240;
 const navItems = [
   { name: "flat to hierarchy", nav: "/" },
   { name: "hierarchy to flat", nav: "/htf" },
 ];
 
-const Appbar = ({ children, getTreeData }) => {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+const add_data = [
+  {
+    name: "Add new Member",
+    icon: <RememberMeIcon />,
+  },
+  {
+    name: "Add new Admin",
+    icon: <SupervisorAccountIcon />,
+  },
+  {
+    name: "Add new Employee",
+    icon: <BadgeIcon />,
+  },
+];
 
+const drawerWidth = 240;
+
+const Appbar = ({ children }) => {
   const navigate = useNavigate();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
+  const location = useLocation();
+
   const reset_data = async () => {
     try {
-      const response = await fetch("http://localhost:8080/tree/reset_data", {
+      await fetch("http://localhost:8080/tree/reset_data", {
         method: "DELETE",
       });
-      const data = await response.json();
-      console.log(data);
-      getTreeData();
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }
   };
+
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [isClosing, setIsClosing] = React.useState(false);
+
+  const handleDrawerClose = () => {
+    setIsClosing(true);
+    setMobileOpen(false);
+  };
+
+  const handleDrawerTransitionEnd = () => {
+    setIsClosing(false);
+  };
+
+  const handleDrawerToggle = () => {
+    if (!isClosing) {
+      setMobileOpen(!mobileOpen);
+    }
+  };
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        React hierarchy
-      </Typography>
+    <div>
+      <Toolbar />
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <Link to={item.nav}>
-            <ListItem key={item.name} disablePadding>
-              <ListItemButton sx={{ textAlign: "center" }}>
-                <ListItemText primary={item.name} />
+        {navItems.map((text) => (
+          <Link
+            to={text.nav}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItem key={text.name} disablePadding>
+              <ListItemButton selected={text.nav === location.pathname}>
+                <ListItemIcon>
+                  <FolderIcon />
+                </ListItemIcon>
+                <ListItemText primary={text.name} />
               </ListItemButton>
             </ListItem>
           </Link>
         ))}
-        <Link>
-          <ListItem disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={"Reset Data"} />
+      </List>
+      <Divider />
+      <List>
+        {add_data.map((text) => (
+          <ListItem key={text.name} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>{text.icon}</ListItemIcon>
+              <ListItemText primary={text.name} />
             </ListItemButton>
           </ListItem>
-        </Link>
+        ))}
       </List>
-    </Box>
+    </div>
   );
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar component="nav">
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -81,36 +128,22 @@ const Appbar = ({ children, getTreeData }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            React hierarchy
-          </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button
-                key={item.name}
-                onClick={() => navigate(item.nav)}
-                sx={{ color: "#fff" }}
-              >
-                {item.name}
-              </Button>
-            ))}
-            <Button onClick={reset_data} sx={{ color: "#fff" }}>
-              Reset data
-            </Button>
-          </Box>
+          <Typography variant="h6">HIERARCHY TREE</Typography>
+          <Button>Reset Data</Button>
         </Toolbar>
       </AppBar>
-      <nav>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
-          onClose={handleDrawerToggle}
+          onTransitionEnd={handleDrawerTransitionEnd}
+          onClose={handleDrawerClose}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: "block", sm: "none" },
@@ -122,8 +155,28 @@ const Appbar = ({ children, getTreeData }) => {
         >
           {drawer}
         </Drawer>
-      </nav>
-      <Box component="main" sx={{ p: 3 }}>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
+      >
         <Toolbar />
         {children}
       </Box>
