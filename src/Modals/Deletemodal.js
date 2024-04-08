@@ -1,32 +1,31 @@
 import { Box, Button, Modal } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { style } from "../styles/style";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import ForwardSharpIcon from "@mui/icons-material/ForwardSharp";
+import ModelContext from "../Context/ModelContext";
+import toast from "react-hot-toast";
 
 export const DeleteModal = ({
   closemodal,
   loading,
   selectedEmployees,
   setSelectedEmployees,
-  setErrmsg,
   id,
   getTreeData,
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const { open, setOpen, memberlength } = useContext(ModelContext);
 
-  const handleOpen = async () => {
-    if (Object.keys(selectedEmployees).length < 4) {
-      setErrmsg("Please set employees to all members");
-    } else {
+  const handleOpen = () => {
+    if (Object.keys(selectedEmployees).length === memberlength) {
       setOpen(true);
-      console.log(selectedEmployees);
-      setErrmsg("");
+    } else {
+      toast.error("Please set employee to all Members");
     }
   };
 
-  const handleClose = async () => {
+  const handleDelete = async () => {
     setOpen(false);
     try {
       await fetch("http://localhost:8080/tree/deleteemp/" + id, {
@@ -42,6 +41,10 @@ export const DeleteModal = ({
     } catch (error) {
       console.log(error.meessage);
     }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -92,7 +95,7 @@ export const DeleteModal = ({
               startIcon={<DeleteIcon />}
               variant="contained"
               color="error"
-              onClick={handleClose}
+              onClick={handleDelete}
             >
               Delete
             </Button>

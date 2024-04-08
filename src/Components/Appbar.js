@@ -20,30 +20,34 @@ import RememberMeIcon from "@mui/icons-material/RememberMe";
 import BadgeIcon from "@mui/icons-material/Badge";
 
 const navItems = [
-  { name: "flat to hierarchy", nav: "/" },
-  { name: "hierarchy to flat", nav: "/htf" },
+  { id: 1, name: "flat to hierarchy", nav: "/" },
+  { id: 2, name: "hierarchy to flat", nav: "/htf" },
 ];
 
 const add_data = [
   {
+    id: 1,
     name: "Add new Member",
     icon: <RememberMeIcon />,
+    path: "/add_member",
   },
   {
+    id: 2,
     name: "Add new Admin",
     icon: <SupervisorAccountIcon />,
+    path: "/add_admin",
   },
   {
+    id: 3,
     name: "Add new Employee",
     icon: <BadgeIcon />,
+    path: "/add_employee",
   },
 ];
 
 const drawerWidth = 240;
 
 const Appbar = ({ children }) => {
-  const navigate = useNavigate();
-
   const location = useLocation();
 
   const reset_data = async () => {
@@ -82,6 +86,7 @@ const Appbar = ({ children }) => {
         {navItems.map((text) => (
           <Link
             to={text.nav}
+            key={text.id}
             style={{ textDecoration: "none", color: "black" }}
           >
             <ListItem key={text.name} disablePadding>
@@ -98,12 +103,18 @@ const Appbar = ({ children }) => {
       <Divider />
       <List>
         {add_data.map((text) => (
-          <ListItem key={text.name} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>{text.icon}</ListItemIcon>
-              <ListItemText primary={text.name} />
-            </ListItemButton>
-          </ListItem>
+          <Link
+            to={text.path}
+            key={text.id}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItem key={text.name} disablePadding>
+              <ListItemButton selected={text.path === location.pathname}>
+                <ListItemIcon>{text.icon}</ListItemIcon>
+                <ListItemText primary={text.name} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </div>
@@ -118,7 +129,13 @@ const Appbar = ({ children }) => {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -129,7 +146,11 @@ const Appbar = ({ children }) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6">HIERARCHY TREE</Typography>
-          <Button>Reset Data</Button>
+          {location.pathname === "/" && (
+            <Button color="inherit" onClick={reset_data}>
+              Reset Data
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Box

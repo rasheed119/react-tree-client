@@ -35,6 +35,10 @@ const HTF = () => {
     }
   };
   useEffect(() => {
+    window.scrollTo({
+      left: 150,
+      behavior: "smooth",
+    });
     getTreeData();
   }, []);
 

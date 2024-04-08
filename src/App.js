@@ -1,23 +1,31 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Tree from "./Tree/Tree";
-import HTF from "./Tree/HTF";
-import AddMember from "./Components/AddMember";
-import AddEmployee from "./Components/AddEmployee";
-import AddAdmin from "./Components/AddAdmin";
-
+import { Toaster } from "react-hot-toast";
+const HTF = lazy(() => import("./Tree/HTF"));
+const Tree = lazy(() => import("./Tree/Tree"));
+const AddMember = lazy(() => import("./Components/AddMember"));
+const AddEmployee = lazy(() => import("./Components/AddEmployee"));
+const AddAdmin = lazy(() => import("./Components/AddAdmin"));
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Tree />} />
-        <Route path="/htf" element={<HTF />} />
-        <Route path="/add_member" element={<AddMember/>}/>
-        <Route path="/add_employee" element={<AddEmployee/>}/>
-        <Route path="/add_admin" element={<AddAdmin/>}/>
-      </Routes>
-    </Router>
+    <Suspense fallback={"Loading..."}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Tree />} />
+          <Route path="/htf" element={<HTF />} />
+          <Route path="/add_member" element={<AddMember />} />
+          <Route path="/add_employee" element={<AddEmployee />} />
+          <Route path="/add_admin" element={<AddAdmin />} />
+        </Routes>
+      </Router>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 5000,
+        }}
+      />
+    </Suspense>
   );
 };
 
