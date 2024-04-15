@@ -13,14 +13,19 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RotatingLines } from "react-loader-spinner";
 import { Divider } from "@mui/material";
-import SuperAdminOptions from "../Options/SuperAdminOptions.js";
-import AdminOptions from "../Options/AdminOptions.js";
+import FolderTree, { testData } from "react-folder-tree";
+import "react-folder-tree/dist/style.css";
 import EmployeeOptions from "../Options/EmployeeOptions.js";
 import MemberOption from "../Options/MemberOption.js";
 import OptionContext from "../Context/OptionContext.js";
 
-export default function Tree() {
+const Tree = () => {
+  const onTreeStateChange = (state, event) => {
+    console.log(state, event);
+  };
+
   const [loading, setLoading] = useState(true);
+  const [treeData, setTreeData] = useState([]);
 
   const { data, setdata, state, getTreeData, open, setOpen } =
     useContext(OptionContext);
@@ -32,14 +37,6 @@ export default function Tree() {
     setShowDeleteModal(false);
     setSelectedEmployees({});
   }; */
-
-  useEffect(() => {
-    window.scrollTo({
-      left: 150,
-      behavior: "smooth",
-    });
-    getTreeData();
-  }, []);
 
   function unflatten(items) {
     var tree = [],
@@ -67,6 +64,57 @@ export default function Tree() {
     }
     return tree;
   }
+
+  useEffect(() => {
+    window.scrollTo({
+      left: 150,
+      behavior: "smooth",
+    });
+    getTreeData();
+  }, []);
+
+  useEffect(() => {
+    if (state.length > 0) {
+      const unflattenedData = unflatten(state);
+      setTreeData(unflattenedData);
+    }
+  }, [state]);
+
+  function removeChildrenKey(node) {
+    if (
+      !node.children ||
+      !Array.isArray(node.children) ||
+      node.children.length === 0
+    ) {
+      delete node.children;
+    } else {
+      node.children.forEach((child) => removeChildrenKey(child));
+    }
+  }
+
+  const objdata = treeData[0];
+  //console.log(objdata.length > 0 && objdata[0]);
+
+  objdata && removeChildrenKey(objdata);
+
+/*   function addCheckedAndIsOpen(obj) {
+    console.log(obj);
+    // Base case: if the object is empty or not an object, return
+    if (typeof obj !== "object" || Object.keys(obj).length === 0) {
+      return;
+    }
+
+    // Add the 'checked' key with a value of 0 and 'isOpen' key with a value of false to the current object
+    obj.checked = 0;
+    obj.isOpen = false;
+
+    // Recursively traverse through each child object
+    for (let key in obj) {
+      if (typeof obj[key] === "object") {
+        addCheckedAndIsOpen(obj[key]);
+      }
+    }
+  } */
 
   /*   const getMembers = async (empid) => {
     setLoading(true);
@@ -147,12 +195,12 @@ export default function Tree() {
     }
   };
 
-  const handleItemClick = (e, id, Name, role, role_id) => {
+  const handleItemClick = (e, id, name, role, role_id) => {
     e.stopPropagation();
     setLoading(true);
     setdata({
       id,
-      Name,
+      name,
       role,
       role_id,
     });
@@ -185,10 +233,13 @@ export default function Tree() {
     }
   }
 
+  console.log(treeData[0]);
+
   return (
     <Appbar>
+      <FolderTree data={testData} onChange={onTreeStateChange} />
       <div className="tree">
-        <div>{treeRendering(unflatten(state), handleItemClick)}</div>
+        <div>{treeRendering(treeData, handleItemClick)}</div>
       </div>
       <div>
         <Drawer open={open} anchor="right" onClose={toggleDrawer(false)}>
@@ -242,7 +293,7 @@ export default function Tree() {
                           <TableCell sx={{ fontWeight: "bold" }}>
                             Name
                           </TableCell>
-                          <TableCell>{data.Name}</TableCell>
+                          <TableCell>{data.name}</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell sx={{ fontWeight: "bold" }}>
@@ -269,6 +320,7 @@ export default function Tree() {
                       </Typography>
                     </>
                   )}
+
                   <div>
                     {/*                     {data.role === "SA" && <SuperAdminOptions />}
                     {data.role === "A" && <AdminOptions />} */}
@@ -351,4 +403,5 @@ export default function Tree() {
       </div>
     </Appbar>
   );
-}
+};
+export default Tree;

@@ -83,7 +83,7 @@ function MemberOption() {
       });
       if (response.ok) {
         getTreeData();
-        toast.success(`Hurray 🥳, ${data.Name} Promoted to Employee`);
+        toast.success(`Hurray 🥳, ${data.name} Promoted to Employee`);
         setOpen(false);
       }
     } catch (error) {
@@ -183,7 +183,7 @@ function MemberOption() {
                 >
                   {admin?.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
-                      {item.Name}
+                      {item.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -197,7 +197,7 @@ function MemberOption() {
               color="success"
               onClick={promote_employee}
             >
-              Promote {data.Name} to Employee
+              Promote {data.name} to Employee
             </Button>
           </Box>
         </AccordionDetails>
@@ -241,7 +241,7 @@ function MemberOption() {
                 >
                   {employee?.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
-                      {item.Name}
+                      {item.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -271,7 +271,7 @@ function MemberOption() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="h6">
-            Are You Sure want to remove {data.Name} ?
+            Are You Sure want to remove {data.name} ?
           </Typography>
         </AccordionDetails>
         <AccordionActions>

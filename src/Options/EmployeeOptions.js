@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import Accordion from "@mui/material/Accordion";
-import AccordionActions from "@mui/material/AccordionActions";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -28,7 +27,6 @@ export default function EmployeeOptions() {
   const [employee, setemployee] = useState([]);
   const [selectedEmployees, setselectedEmployees] = useState({});
   const [deletedEmployees, setdeletedEmployees] = useState({});
-  console.log(deletedEmployees);
 
   useEffect(() => {
     get_members();
@@ -261,7 +259,7 @@ export default function EmployeeOptions() {
                   >
                     {member?.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
-                        {item.Name}
+                        {item.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -310,7 +308,7 @@ export default function EmployeeOptions() {
           {member?.length > 0 &&
             member?.map((item) => (
               <Box sx={{ my: 1 }}>
-                <Typography sx={{ my: 1 }}>{item.Name}</Typography>
+                <Typography sx={{ my: 1 }}>{item.name}</Typography>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
                     Select Employee
@@ -326,7 +324,7 @@ export default function EmployeeOptions() {
                   >
                     {employee?.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
-                        {item.Name}
+                        {item.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -357,7 +355,7 @@ export default function EmployeeOptions() {
               color="success"
               onClick={promote_to_admin_map_members_to_employees}
             >
-              Promote {data.Name} to admin
+              Promote {data.name} to admin
             </Button>
           </Box>
         </AccordionDetails>
@@ -377,7 +375,7 @@ export default function EmployeeOptions() {
           {member?.length > 0 &&
             member?.map((item) => (
               <Box sx={{ my: 1 }}>
-                <Typography sx={{ my: 1 }}>{item.Name}</Typography>
+                <Typography sx={{ my: 1 }}>{item.name}</Typography>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
                     Select Employee
@@ -386,8 +384,8 @@ export default function EmployeeOptions() {
                     sx={{ flex: 1 }}
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={delete_employee[item.id] || ""}
                     label="Select member to map"
+                    value={deletedEmployees[item.id]}
                     name="delete_employee"
                     onChange={(e) =>
                       handleChangeDelete(e, item.id, e.target.value)
@@ -395,7 +393,7 @@ export default function EmployeeOptions() {
                   >
                     {employee?.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
-                        {item.Name}
+                        {item.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -426,7 +424,7 @@ export default function EmployeeOptions() {
               color="error"
               onClick={delete_employee}
             >
-              Remove {data.Name}
+              Remove {data.name}
             </Button>
           </Box>
         </AccordionDetails>

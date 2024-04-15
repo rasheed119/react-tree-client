@@ -6,14 +6,14 @@ export const treeRendering = (treeData, onItemClick) => {
           <li
             key={index}
             onClick={(e) =>
-              onItemClick(e, item.id, item.Name, item.role, item.role_id)
+              onItemClick(e, item.id, item.name, item.role, item.role_id)
             }
           >
             <div className={`${item.role === "E" && "pointer"}`}>
-              {item.Name}
+              {item.name}
             </div>
             {item.children &&
-              item.children.length > 0 &&
+              item.children?.length > 0 &&
               treeRendering(item.children, onItemClick)}
           </li>
         ))}

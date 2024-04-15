@@ -5,17 +5,14 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import theme from "./font/theme";
 import { ThemeProvider } from "@mui/material/styles";
-import ModelContextProvider from "./Context/ModelContextProvider";
 import OptionsContextProvider from "./Context/OptionsContextProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ThemeProvider theme={theme}>
-    <ModelContextProvider>
-      <OptionsContextProvider>
-        <App />
-      </OptionsContextProvider>
-    </ModelContextProvider>
+    <OptionsContextProvider>
+      <App />
+    </OptionsContextProvider>
   </ThemeProvider>
 );
 
