@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import Appbar from "../Components/Appbar";
-import "../tree.css";
 import Box from "@mui/material/Box";
 import { treeRendering } from "../Helpers/treerender.js";
 import Drawer from "@mui/material/Drawer";
@@ -12,20 +11,49 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RotatingLines } from "react-loader-spinner";
-import { Divider } from "@mui/material";
-import FolderTree, { testData } from "react-folder-tree";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
+import FolderTree from "react-folder-tree";
 import "react-folder-tree/dist/style.css";
 import EmployeeOptions from "../Options/EmployeeOptions.js";
 import MemberOption from "../Options/MemberOption.js";
 import OptionContext from "../Context/OptionContext.js";
+import "../tree.css";
+import toast from "react-hot-toast";
 
 const Tree = () => {
+  //Code to Check all the checed ids
+  const [checkedIds, setCheckedIds] = useState([]);
+
+  // Function to recursively find checked ids
+  const findCheckedIds = (node) => {
+    const ids = [];
+    if (node.checked === 1) {
+      ids.push(node.id);
+    }
+    if (node.children) {
+      node.children.forEach((child) => {
+        ids.push(...findCheckedIds(child)); // Concatenate arrays
+      });
+    }
+    return ids;
+  };
+
   const onTreeStateChange = (state, event) => {
-    console.log(state, event);
+    setshow(state);
+    const ids = findCheckedIds(state);
+    setCheckedIds(ids); // Update state with checked ids
   };
 
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState([]);
+  const [show, setshow] = useState({});
+  const [conform_delete, setConform_delete] = useState(false);
 
   const { data, setdata, state, getTreeData, open, setOpen } =
     useContext(OptionContext);
@@ -97,7 +125,7 @@ const Tree = () => {
 
   objdata && removeChildrenKey(objdata);
 
-/*   function addCheckedAndIsOpen(obj) {
+  /*   function addCheckedAndIsOpen(obj) {
     console.log(obj);
     // Base case: if the object is empty or not an object, return
     if (typeof obj !== "object" || Object.keys(obj).length === 0) {
@@ -233,14 +261,82 @@ const Tree = () => {
     }
   }
 
-  console.log(treeData[0]);
+  const Delete_Selected = async () => {
+    const response = await fetch(
+      "http://localhost:8080/folderview/delete_selected",
+      {
+        method: "DELETE",
+        body: JSON.stringify({ checkedIds }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.ok) {
+      setConform_delete(false);
+      setCheckedIds([]);
+      getTreeData();
+      toast.success("Successfully deleted");
+    } else {
+      toast.error("Something Went Wrong..");
+    }
+  };
 
   return (
     <Appbar>
-      <FolderTree data={testData} onChange={onTreeStateChange} />
-      <div className="tree">
-        <div>{treeRendering(treeData, handleItemClick)}</div>
-      </div>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <div className="tree">
+          <div>{treeRendering(treeData, handleItemClick)}</div>
+        </div>
+        <Typography sx={{ marginLeft: "170px", my: 2 }} variant="h5">
+          Folder View
+        </Typography>
+        <Box
+          sx={{
+            marginLeft: "170px",
+            display: "flex",
+            gap: "20rem",
+          }}
+        >
+          <Box sx={{ overflow: "scroll", height: "200px", width: "250px" }}>
+            {treeData.length > 0 && treeData ? (
+              <FolderTree data={treeData[0]} onChange={onTreeStateChange} />
+            ) : (
+              <p>Loading...</p>
+            )}
+          </Box>
+          {show.checked > 0 && (
+            <>
+              <Box sx={{ marginLeft: 0 }}>
+                <Typography variant="h6">Delete Selected </Typography>
+                <FormGroup sx={{ my: 1 }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={() => setConform_delete(!conform_delete)}
+                        checked={conform_delete}
+                      />
+                    }
+                    label="Are you Sure What to Delete Selected?"
+                  />
+                </FormGroup>
+                <Box
+                  sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}
+                >
+                  <Button
+                    disabled={!conform_delete}
+                    variant="contained"
+                    color="error"
+                    onClick={Delete_Selected}
+                  >
+                    Delete
+                  </Button>
+                </Box>
+              </Box>
+            </>
+          )}
+        </Box>
+      </Box>
       <div>
         <Drawer open={open} anchor="right" onClose={toggleDrawer(false)}>
           <Box sx={{ width: 600, height: "100%" }} role="presentation">

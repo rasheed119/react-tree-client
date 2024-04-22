@@ -120,7 +120,7 @@ export default function AddMember() {
               >
                 {employee.employees?.map((emp) => (
                   <MenuItem key={emp.id} value={emp.id}>
-                    {emp.Name}
+                    {emp.name}
                   </MenuItem>
                 ))}
               </Select>

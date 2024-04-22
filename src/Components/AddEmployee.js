@@ -116,7 +116,7 @@ export default function AddEmployee() {
               >
                 {admin.admin?.map((emp) => (
                   <MenuItem key={emp.id} value={emp.id}>
-                    {emp.Name}
+                    {emp.name}
                   </MenuItem>
                 ))}
               </Select>

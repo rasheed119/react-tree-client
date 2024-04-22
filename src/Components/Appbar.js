@@ -21,7 +21,6 @@ import BadgeIcon from "@mui/icons-material/Badge";
 
 const navItems = [
   { id: 1, name: "flat to hierarchy", nav: "/" },
-  { id: 2, name: "hierarchy to flat", nav: "/htf" },
 ];
 
 const add_data = [
@@ -42,7 +41,7 @@ const add_data = [
     name: "Add new Employee",
     icon: <BadgeIcon />,
     path: "/add_employee",
-  },
+  }
 ];
 
 const drawerWidth = 240;
